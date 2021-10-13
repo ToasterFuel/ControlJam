@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "__node_handle": "c",
+        "ecs.h": "c",
+        "ios": "c",
+        "ranges": "c",
+        "random": "c"
+    }
+}

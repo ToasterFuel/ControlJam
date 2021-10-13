@@ -7,7 +7,10 @@
 #include <stdbool.h>
 
 #include "ControllerTesting.h"
+#include "ECS.h"
+#include "Graphics.h"
 #include "Physics.h"
+#include "Vector2.h"
 
 static resolution_t res = RESOLUTION_640x480;
 static bitdepth_t bit = DEPTH_32_BPP;
@@ -36,18 +39,17 @@ int main(void)
         dfs_close( fp );
     }
 
-    /* Basic Collision Testing */
-    BoxCollider playerCollider;
-    playerCollider.position.x = 100;
-    playerCollider.position.y = 100;
-    playerCollider.width = 50;
-    playerCollider.height = 50;
+    Entity player;
+    AddComponentTransform(&player, (Vector2){100, 100}, ZeroVector());
+    AddComponentRectangleGraphic(&player, 50, 50, 0xFF0000FF);
+    AddComponentBoxCollider(&player, ZeroVector(), 50, 50);
+    AddComponentRigidBody(&player, 1);
 
-    BoxCollider obstacleCollider;
-    obstacleCollider.position.x = 200;
-    obstacleCollider.position.y = 150;
-    obstacleCollider.width = 50;
-    obstacleCollider.height = 50;
+    Entity obstacle;
+    AddComponentTransform(&obstacle, (Vector2){200, 150}, ZeroVector());
+    AddComponentRectangleGraphic(&obstacle, 50, 50, 0x0000FFFF);
+    AddComponentBoxCollider(&obstacle, ZeroVector(), 50, 50);
+    AddComponentRigidBody(&obstacle, 1);
 
 
     /* Main loop test */
@@ -64,7 +66,7 @@ int main(void)
         /* Set the text output color */
         graphics_set_color(0xFFFFFFFF, 0x0);
 
-        if (IsBoxColliding(playerCollider, obstacleCollider)) {
+        if (IsBoxColliding(player.components.boxCollider, obstacle.components.boxCollider)) {
             graphics_draw_text( disp, 20, 20, "OMG COLLIDING!!!" );
         }
         else {
@@ -72,8 +74,8 @@ int main(void)
         }
 
         /* Draw boxes */
-        graphics_draw_box(disp, playerCollider.position.x, playerCollider.position.y, playerCollider.width, playerCollider.height, 0xFF0000FF);
-        graphics_draw_box(disp, obstacleCollider.position.x, obstacleCollider.position.y, obstacleCollider.width, obstacleCollider.height, 0x0000FFFF);
+        DrawRectangle(player.components.rectangleGraphic, disp);
+        DrawRectangle(obstacle.components.rectangleGraphic, disp);
 
         /* To do initialize routines */
         controller_scan();
@@ -81,8 +83,7 @@ int main(void)
         struct controller_data keys = get_keys_pressed();
 
         /* Only checking player 1's controller */
-        playerCollider.position.x += moveSpeed * keys.c[0].x;
-        playerCollider.position.y -= moveSpeed * keys.c[0].y;
+        AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, keys.c[0].y * moveSpeed}, false);
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */
