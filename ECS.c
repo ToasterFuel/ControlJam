@@ -22,7 +22,7 @@ void AddComponentTransform(Entity *entity, Vector2 position, Vector2 rotation)
 void AddComponentRectangleGraphic(Entity *entity, float width, float height, uint32_t colour)
 {
     entity->components.rectangleGraphic = malloc(sizeof(RectangleGraphic));
-    if (!(entity->components.transform)) AddComponentTransform(&entity, ZeroVector(), ZeroVector());
+    if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
     entity->components.rectangleGraphic->width = width;
     entity->components.rectangleGraphic->height = height;
     entity->components.rectangleGraphic->colour = colour;
@@ -31,7 +31,7 @@ void AddComponentRectangleGraphic(Entity *entity, float width, float height, uin
 void AddComponentRigidBody(Entity *entity, float mass)
 {
     entity->components.rigidBody = malloc(sizeof(RigidBody));
-    if (!(entity->components.transform)) AddComponentTransform(&entity, ZeroVector(), ZeroVector());
+    if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
     entity->components.boxCollider->transform = entity->components.transform;
     entity->components.rigidBody->mass = mass;
     entity->components.rigidBody->velocity = ZeroVector();
@@ -41,7 +41,7 @@ void AddComponentRigidBody(Entity *entity, float mass)
 void AddComponentBoxCollider(Entity *entity, Vector2 localPosition, float width, float height)
 {
     entity->components.boxCollider = malloc(sizeof(BoxCollider));
-    if (!(entity->components.transform)) AddComponentTransform(&entity, ZeroVector(), ZeroVector());
+    if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
     entity->components.boxCollider->transform = entity->components.transform;
     entity->components.boxCollider->localPosition = localPosition;
     entity->components.boxCollider->width = width;
@@ -51,7 +51,7 @@ void AddComponentBoxCollider(Entity *entity, Vector2 localPosition, float width,
 void AddComponentCircleCollider(Entity *entity, Vector2 localPosition, float radius)
 {
     entity->components.circleCollider = malloc(sizeof(CircleCollider));
-    if (!(entity->components.transform)) AddComponentTransform(&entity, ZeroVector(), ZeroVector());
+    if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
     entity->components.circleCollider->transform = entity->components.transform;
     entity->components.circleCollider->localPosition = localPosition;
     entity->components.circleCollider->radius = radius;
