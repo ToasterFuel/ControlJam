@@ -15,7 +15,7 @@
 static resolution_t res = RESOLUTION_640x480;
 static bitdepth_t bit = DEPTH_32_BPP;
 
-static float moveSpeed = 0.1;
+static float moveSpeed = 1;
 
 int main(void)
 {
@@ -83,7 +83,9 @@ int main(void)
         struct controller_data keys = get_keys_pressed();
 
         /* Only checking player 1's controller */
-        AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, keys.c[0].y * moveSpeed}, false);
+        AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
+        float time = 1.0 / 30.0;
+        UpdateRigidBody(player.components.rigidBody, time);
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */

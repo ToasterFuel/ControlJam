@@ -4,6 +4,7 @@
         "ecs.h": "c",
         "ios": "c",
         "ranges": "c",
-        "random": "c"
+        "random": "c",
+        "stdio.h": "c"
     }
 }

@@ -23,6 +23,7 @@ void AddComponentRectangleGraphic(Entity *entity, float width, float height, uin
 {
     entity->components.rectangleGraphic = malloc(sizeof(RectangleGraphic));
     if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
+    entity->components.rectangleGraphic->transform = entity->components.transform;
     entity->components.rectangleGraphic->width = width;
     entity->components.rectangleGraphic->height = height;
     entity->components.rectangleGraphic->colour = colour;
@@ -32,7 +33,7 @@ void AddComponentRigidBody(Entity *entity, float mass)
 {
     entity->components.rigidBody = malloc(sizeof(RigidBody));
     if (!(entity->components.transform)) AddComponentTransform(entity, ZeroVector(), ZeroVector());
-    entity->components.boxCollider->transform = entity->components.transform;
+    entity->components.rigidBody->transform = entity->components.transform;
     entity->components.rigidBody->mass = mass;
     entity->components.rigidBody->velocity = ZeroVector();
     entity->components.rigidBody->acceleration = ZeroVector();
