@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdint.h>
@@ -54,7 +55,19 @@ int main(void)
     ECS_AddComponentTransform(obstacle, &componentsList, (Vector2){200, 150}, ZeroVector());
     ECS_AddComponentRectangleGraphic(obstacle, &componentsList, 50, 50, 0x0000FFFF);
     ECS_AddComponentBoxCollider(obstacle, &componentsList, ZeroVector(), 50, 50);
-    ECS_AddComponentRigidBody(obstacle, &componentsList, 1);
+
+    /* Use this shizz if you wanna see a bunch of blocks
+
+    time_t t;
+    srand((unsigned) time(&t));
+    for (int i = 0; i < 1000; i++) {
+        Entity x;
+        ECS_AddComponentTransform(&x, &componentsList, (Vector2){rand() % 400, rand() % 400}, ZeroVector());
+        int size = rand() % 50;
+        ECS_AddComponentRectangleGraphic(&x, &componentsList, size, size, 0x00FF00FF);
+    }
+    
+    */
 
 
     /* Main loop test */

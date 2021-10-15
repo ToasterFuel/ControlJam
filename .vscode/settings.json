@@ -30,6 +30,7 @@
         "vector": "c",
         "graphics.h": "c",
         "map": "c",
-        "queue": "c"
+        "queue": "c",
+        "stdlib.h": "c"
     }
 }
