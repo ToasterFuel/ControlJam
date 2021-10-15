@@ -6,19 +6,39 @@
 #include "Physics.h"
 #include "Vector2.h"
 
-void FreeEntity(Entity *entity, ComponentsList *componentsList)
+/* TODO: Remove node from components list as well */
+void ECS_FreeEntity(Entity *entity, ComponentsList *componentsList)
 {
     if (entity->components.transform)
+    {
         free(entity->components.transform);
+        LL_RemoveByValue(entity->components.transform, componentsList->transformComponents);
+    }
+    if (entity->components.rectangleGraphic)
+    {
+        free(entity->components.rectangleGraphic);
+        LL_RemoveByValue(entity->components.rectangleGraphic, componentsList->rectangleGraphicComponents);
+    }
     if (entity->components.rigidBody)
+    {
         free(entity->components.rigidBody);
+        LL_RemoveByValue(entity->components.rigidBody, componentsList->rigidBodyComponents);
+    }
     if (entity->components.boxCollider)
+    {
         free(entity->components.boxCollider);
+        LL_RemoveByValue(entity->components.boxCollider, componentsList->boxColliderComponents);
+    }
     if (entity->components.circleCollider)
+    {
         free(entity->components.circleCollider);
+        LL_RemoveByValue(entity->components.circleCollider, componentsList->circleColliderComponents);
+    }
+    free(entity);
+    entity = NULL;
 }
 
-void AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vector2 position, Vector2 rotation)
+void ECS_AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vector2 position, Vector2 rotation)
 {
     entity->components.transform = malloc(sizeof(Transform));
     entity->components.transform->position = position;
@@ -26,11 +46,11 @@ void AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vecto
     LL_Insert(entity->components.transform, componentsList->transformComponents);
 }
 
-void AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList, float width, float height, uint32_t colour)
+void ECS_AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList, float width, float height, uint32_t colour)
 {
     entity->components.rectangleGraphic = malloc(sizeof(RectangleGraphic));
     if (!(entity->components.transform))
-        AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
+        ECS_AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
     entity->components.rectangleGraphic->transform = entity->components.transform;
     entity->components.rectangleGraphic->width = width;
     entity->components.rectangleGraphic->height = height;
@@ -38,11 +58,11 @@ void AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList
     LL_Insert(entity->components.rectangleGraphic, componentsList->rectangleGraphicComponents);
 }
 
-void AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float mass)
+void ECS_AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float mass)
 {
     entity->components.rigidBody = malloc(sizeof(RigidBody));
     if (!(entity->components.transform))
-        AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
+        ECS_AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
     entity->components.rigidBody->transform = entity->components.transform;
     entity->components.rigidBody->mass = mass;
     entity->components.rigidBody->velocity = ZeroVector();
@@ -50,11 +70,11 @@ void AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float
     LL_Insert(entity->components.rigidBody, componentsList->rigidBodyComponents);
 }
 
-void AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float width, float height)
+void ECS_AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float width, float height)
 {
     entity->components.boxCollider = malloc(sizeof(BoxCollider));
     if (!(entity->components.transform))
-        AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
+        ECS_AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
     entity->components.boxCollider->transform = entity->components.transform;
     entity->components.boxCollider->localPosition = localPosition;
     entity->components.boxCollider->width = width;
@@ -62,18 +82,25 @@ void AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vec
     LL_Insert(entity->components.boxCollider, componentsList->boxColliderComponents);
 }
 
-void AddComponentCircleCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float radius)
+void ECS_AddComponentCircleCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float radius)
 {
     entity->components.circleCollider = malloc(sizeof(CircleCollider));
     if (!(entity->components.transform))
-        AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
+        ECS_AddComponentTransform(entity, componentsList, ZeroVector(), ZeroVector());
     entity->components.circleCollider->transform = entity->components.transform;
     entity->components.circleCollider->localPosition = localPosition;
     entity->components.circleCollider->radius = radius;
     LL_Insert(entity->components.circleCollider, componentsList->circleColliderComponents);
 }
 
-void ECS_CreateComponentsList(ComponentsList *componentsList) {
+void ECS_CreateComponentsList(ComponentsList *componentsList)
+{
+    componentsList->transformComponents = (struct LinkedList *)malloc(sizeof(struct LinkedList));
+    componentsList->rectangleGraphicComponents = (struct LinkedList *)malloc(sizeof(struct LinkedList));
+    componentsList->rigidBodyComponents = (struct LinkedList *)malloc(sizeof(struct LinkedList));
+    componentsList->boxColliderComponents = (struct LinkedList *)malloc(sizeof(struct LinkedList));
+    componentsList->circleColliderComponents = (struct LinkedList *)malloc(sizeof(struct LinkedList));
+
     LL_Create(componentsList->transformComponents);
     LL_Create(componentsList->rectangleGraphicComponents);
     LL_Create(componentsList->rigidBodyComponents);
@@ -86,6 +113,7 @@ void ECS_UpdateComponents(ComponentsList *componentsList, float deltaTime)
     RigidBody_UpdateAll(componentsList->rigidBodyComponents, deltaTime);
 }
 
-void ECS_DrawComponents(ComponentsList *componentsList, display_context_t disp) {
+void ECS_DrawComponents(ComponentsList *componentsList, display_context_t disp)
+{
     RectangleGraphic_DrawAll(componentsList->rectangleGraphicComponents, disp);
 }

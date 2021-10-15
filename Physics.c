@@ -50,7 +50,12 @@ void RigidBody_Update(RigidBody *self, float deltaTime)
 
 void RigidBody_UpdateAll(LinkedList *list, float deltaTime)
 {
+    if (list->head == NULL)
+        return;
+    
     Node *temp = list->head;
+    
+    RigidBody_Update(temp->value, deltaTime);
     while (temp->next != NULL)
     {
         RigidBody_Update(temp->value, deltaTime);

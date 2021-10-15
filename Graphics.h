@@ -14,7 +14,7 @@ typedef struct RectangleGraphic
     uint32_t colour;
 } RectangleGraphic;
 
-void DrawRectangle(RectangleGraphic *rectangle, display_context_t disp);
+void RectangleGraphic_Draw(RectangleGraphic *rectangle, display_context_t disp);
 
 void RectangleGraphic_DrawAll(LinkedList *list, display_context_t disp);
 

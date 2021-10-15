@@ -33,7 +33,7 @@ bool CircleCollider_IsColliding(CircleCollider *first, CircleCollider *second);
 
 void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse);
 
-void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime);
+void RigidBody_Update(RigidBody *self, float deltaTime);
 
 void RigidBody_UpdateAll(LinkedList *list, float deltaTime);
 

@@ -43,17 +43,18 @@ int main(void)
     ComponentsList componentsList;
     ECS_CreateComponentsList(&componentsList);
 
-    Entity player;
-    AddComponentTransform(&player, &componentsList, (Vector2){100, 100}, ZeroVector());
-    AddComponentRectangleGraphic(&player, &componentsList, 50, 50, 0xFF0000FF);
-    AddComponentBoxCollider(&player, &componentsList, ZeroVector(), 50, 50);
-    AddComponentRigidBody(&player, &componentsList, 1);
+    /* These are pointers cause I'm doing a test. They don't need to be */
+    Entity *player = (Entity *)malloc(sizeof(Entity));
+    ECS_AddComponentTransform(player, &componentsList, (Vector2){100, 100}, ZeroVector());
+    ECS_AddComponentRectangleGraphic(player, &componentsList, 50, 50, 0xFF0000FF);
+    ECS_AddComponentBoxCollider(player, &componentsList, ZeroVector(), 50, 50);
+    ECS_AddComponentRigidBody(player, &componentsList, 1);
 
-    Entity obstacle;
-    AddComponentTransform(&obstacle, &componentsList, (Vector2){200, 150}, ZeroVector());
-    AddComponentRectangleGraphic(&obstacle, &componentsList, 50, 50, 0x0000FFFF);
-    AddComponentBoxCollider(&obstacle, &componentsList, ZeroVector(), 50, 50);
-    AddComponentRigidBody(&obstacle, &componentsList, 1);
+    Entity *obstacle = (Entity *)malloc(sizeof(Entity));
+    ECS_AddComponentTransform(obstacle, &componentsList, (Vector2){200, 150}, ZeroVector());
+    ECS_AddComponentRectangleGraphic(obstacle, &componentsList, 50, 50, 0x0000FFFF);
+    ECS_AddComponentBoxCollider(obstacle, &componentsList, ZeroVector(), 50, 50);
+    ECS_AddComponentRigidBody(obstacle, &componentsList, 1);
 
 
     /* Main loop test */
@@ -70,11 +71,9 @@ int main(void)
         /* Set the text output color */
         graphics_set_color(0xFFFFFFFF, 0x0);
 
-        if (BoxCollider_IsColliding(player.components.boxCollider, obstacle.components.boxCollider)) {
-            graphics_draw_text( disp, 20, 20, "OMG COLLIDING!!!" );
-        }
-        else {
-            graphics_draw_text( disp, 20, 20, "SAFE" );
+        /* Stupid stuff for testing */
+        if (obstacle != NULL && BoxCollider_IsColliding(player->components.boxCollider, obstacle->components.boxCollider)) {
+            ECS_FreeEntity(obstacle, &componentsList);
         }
 
         /* To do initialize routines */
@@ -82,7 +81,8 @@ int main(void)
 
         /* Move the player */
         struct controller_data keys = get_keys_pressed();
-        RigidBody_AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
+        RigidBody_AddForce(player->components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
+
 
 
         float time = 1.0 / 30.0;

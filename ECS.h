@@ -31,17 +31,17 @@ typedef struct Entity
     Components components;
 } Entity;
 
-void FreeEntity(Entity *entity, ComponentsList *componentsList);
+void ECS_FreeEntity(Entity *entity, ComponentsList *componentsList);
 
-void AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vector2 position, Vector2 rotation);
+void ECS_AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vector2 position, Vector2 rotation);
 
-void AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList, float width, float height, uint32_t colour);
+void ECS_AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList, float width, float height, uint32_t colour);
 
-void AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float mass);
+void ECS_AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float mass);
 
-void AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float width, float height);
+void ECS_AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float width, float height);
 
-void AddComponentCircleCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float radius);
+void ECS_AddComponentCircleCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float radius);
 
 void ECS_CreateComponentsList(ComponentsList *componentsList);
 

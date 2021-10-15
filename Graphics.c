@@ -15,10 +15,15 @@ void RectangleGraphic_Draw(RectangleGraphic *rectangle, display_context_t disp)
 
 void RectangleGraphic_DrawAll(LinkedList *list, display_context_t disp)
 {
+    if (list->head == NULL)
+        return;
+    
     Node *temp = list->head;
+
+    RectangleGraphic_Draw(temp->value, disp);
     while (temp->next != NULL)
     {
-        RectangleGraphic_Draw(temp->value, disp);
         temp = temp->next;
+        RectangleGraphic_Draw(temp->value, disp);
     }
 }
