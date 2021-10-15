@@ -35,7 +35,7 @@ void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse)
     self->acceleration.y += force.y / self->mass;
 }
 
-void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime)
+void RigidBody_Update(RigidBody *self, float deltaTime)
 {
     self->velocity.x += self->acceleration.x * deltaTime;
     self->velocity.y += self->acceleration.y * deltaTime;
@@ -48,11 +48,12 @@ void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime)
     self->acceleration.y = 0;
 }
 
-void RigidBody_UpdateAll(LinkedList *list, float deltaTime) {
+void RigidBody_UpdateAll(LinkedList *list, float deltaTime)
+{
     Node *temp = list->head;
     while (temp->next != NULL)
     {
-        RigidBody_UpdateRigidBody(temp->value, deltaTime);
+        RigidBody_Update(temp->value, deltaTime);
         temp = temp->next;
     }
 }

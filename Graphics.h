@@ -3,6 +3,7 @@
 
 #include <libdragon.h>
 
+#include "LinkedList.h"
 #include "Vector2.h"
 
 typedef struct RectangleGraphic
@@ -14,5 +15,7 @@ typedef struct RectangleGraphic
 } RectangleGraphic;
 
 void DrawRectangle(RectangleGraphic *rectangle, display_context_t disp);
+
+void RectangleGraphic_DrawAll(LinkedList *list, display_context_t disp);
 
 #endif

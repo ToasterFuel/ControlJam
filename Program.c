@@ -77,20 +77,17 @@ int main(void)
             graphics_draw_text( disp, 20, 20, "SAFE" );
         }
 
-        /* Draw boxes */
-        DrawRectangle(player.components.rectangleGraphic, disp);
-        DrawRectangle(obstacle.components.rectangleGraphic, disp);
-
         /* To do initialize routines */
         controller_scan();
 
+        /* Move the player */
         struct controller_data keys = get_keys_pressed();
-
-        /* Only checking player 1's controller */
         RigidBody_AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
-        float time = 1.0 / 30.0;
 
-        RigidBody_UpdateAll(componentsList.rigidBodyComponents, time);
+
+        float time = 1.0 / 30.0;
+        ECS_UpdateComponents(&componentsList, time);
+        ECS_DrawComponents(&componentsList, disp);
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */

@@ -47,4 +47,6 @@ void ECS_CreateComponentsList(ComponentsList *componentsList);
 
 void ECS_UpdateComponents(ComponentsList *componentsList, float deltaTime);
 
+void ECS_DrawComponents(ComponentsList *componentsList, display_context_t disp);
+
 #endif

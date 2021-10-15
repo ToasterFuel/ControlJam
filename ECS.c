@@ -85,3 +85,7 @@ void ECS_UpdateComponents(ComponentsList *componentsList, float deltaTime)
 {
     RigidBody_UpdateAll(componentsList->rigidBodyComponents, deltaTime);
 }
+
+void ECS_DrawComponents(ComponentsList *componentsList, display_context_t disp) {
+    RectangleGraphic_DrawAll(componentsList->rectangleGraphicComponents, disp);
+}

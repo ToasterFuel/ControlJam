@@ -27,6 +27,9 @@
         "iterator": "c",
         "limits": "c",
         "memory": "c",
-        "vector": "c"
+        "vector": "c",
+        "graphics.h": "c",
+        "map": "c",
+        "queue": "c"
     }
 }
