@@ -27,12 +27,14 @@ typedef struct RigidBody
     Vector2 acceleration;
 } RigidBody;
 
-bool IsBoxColliding(BoxCollider *first, BoxCollider *second);
+bool BoxCollider_IsColliding(BoxCollider *first, BoxCollider *second);
 
-bool IsCircleColliding(CircleCollider *first, CircleCollider *second);
+bool CircleCollider_IsColliding(CircleCollider *first, CircleCollider *second);
 
-void AddForce(RigidBody *self, Vector2 force, bool isImpulse);
+void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse);
 
-void UpdateRigidBody(RigidBody *self, float deltaTime);
+void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime);
+
+void RigidBody_UpdateAll(LinkedList *list, float deltaTime);
 
 #endif

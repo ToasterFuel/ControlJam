@@ -8,6 +8,7 @@
 
 #include "ControllerTesting.h"
 #include "ECS.h"
+#include "LinkedList.h"
 #include "Graphics.h"
 #include "Physics.h"
 #include "Vector2.h"
@@ -39,17 +40,20 @@ int main(void)
         dfs_close( fp );
     }
 
+    ComponentsList componentsList;
+    ECS_CreateComponentsList(&componentsList);
+
     Entity player;
-    AddComponentTransform(&player, (Vector2){100, 100}, ZeroVector());
-    AddComponentRectangleGraphic(&player, 50, 50, 0xFF0000FF);
-    AddComponentBoxCollider(&player, ZeroVector(), 50, 50);
-    AddComponentRigidBody(&player, 1);
+    AddComponentTransform(&player, &componentsList, (Vector2){100, 100}, ZeroVector());
+    AddComponentRectangleGraphic(&player, &componentsList, 50, 50, 0xFF0000FF);
+    AddComponentBoxCollider(&player, &componentsList, ZeroVector(), 50, 50);
+    AddComponentRigidBody(&player, &componentsList, 1);
 
     Entity obstacle;
-    AddComponentTransform(&obstacle, (Vector2){200, 150}, ZeroVector());
-    AddComponentRectangleGraphic(&obstacle, 50, 50, 0x0000FFFF);
-    AddComponentBoxCollider(&obstacle, ZeroVector(), 50, 50);
-    AddComponentRigidBody(&obstacle, 1);
+    AddComponentTransform(&obstacle, &componentsList, (Vector2){200, 150}, ZeroVector());
+    AddComponentRectangleGraphic(&obstacle, &componentsList, 50, 50, 0x0000FFFF);
+    AddComponentBoxCollider(&obstacle, &componentsList, ZeroVector(), 50, 50);
+    AddComponentRigidBody(&obstacle, &componentsList, 1);
 
 
     /* Main loop test */
@@ -66,7 +70,7 @@ int main(void)
         /* Set the text output color */
         graphics_set_color(0xFFFFFFFF, 0x0);
 
-        if (IsBoxColliding(player.components.boxCollider, obstacle.components.boxCollider)) {
+        if (BoxCollider_IsColliding(player.components.boxCollider, obstacle.components.boxCollider)) {
             graphics_draw_text( disp, 20, 20, "OMG COLLIDING!!!" );
         }
         else {
@@ -83,9 +87,10 @@ int main(void)
         struct controller_data keys = get_keys_pressed();
 
         /* Only checking player 1's controller */
-        AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
+        RigidBody_AddForce(player.components.rigidBody, (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
         float time = 1.0 / 30.0;
-        UpdateRigidBody(player.components.rigidBody, time);
+
+        RigidBody_UpdateAll(componentsList.rigidBodyComponents, time);
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */
