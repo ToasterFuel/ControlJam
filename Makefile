@@ -53,7 +53,7 @@ $(PROG_NAME).dfs: $(SPRITES) MakeDirs
 	$(MKDFS) $(BUILD_DIR)/$@ $(FS_DIR)
 
 %.sprite: $(RESOURCES_DIR)/%.png
-	$(MKSPRITE) 32 $^ $(FS_DIR)/$@
+	$(MKSPRITE) 16 $^ $(FS_DIR)/$@
 
 .PHONY: clean
 clean:
