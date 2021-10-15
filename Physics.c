@@ -1,42 +1,58 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "LinkedList.h"
 #include "Physics.h"
+#include "Vector2.h"
 
-Vector2 Difference(Vector2 position1, Vector2 position2)
+/* TODO: This needs to take localPosition into account, but it works for now */
+bool BoxCollider_IsColliding(BoxCollider *first, BoxCollider *second)
 {
-    Vector2 result;
-    result.x = position1.x - position2.x;
-    result.y = position1.y - position2.y;
-    return result;
-}
-
-float Length(Vector2 vector)
-{
-    return sqrt(vector.x * vector.x + vector.y * vector.y);
-}
-
-float Distance(Vector2 position1, Vector2 position2)
-{
-    return Length(Difference(position1, position2));
-}
-
-bool IsBoxColliding(BoxCollider first, BoxCollider second)
-{
-    if (first.position.x - first.width / 2 < second.position.x + second.width / 2 &&
-        first.position.x + first.width / 2 > second.position.x - second.width / 2 &&
-        first.position.y - first.height / 2 < second.position.y + second.height / 2 &&
-        first.position.y + first.height / 2 > second.position.y - second.height / 2)
+    if (first->transform->position.x - first->width / 2 < second->transform->position.x + second->width / 2 &&
+        first->transform->position.x + first->width / 2 > second->transform->position.x - second->width / 2 &&
+        first->transform->position.y - first->height / 2 < second->transform->position.y + second->height / 2 &&
+        first->transform->position.y + first->height / 2 > second->transform->position.y - second->height / 2)
     {
-          return true;
-    }
-    return false;
-}
-
-bool IsCircleColliding(CircleCollider first, CircleCollider second)
-{
-    if (Distance(first.position, second.position) < first.radius + second.radius) {
         return true;
     }
     return false;
+}
+
+/* TODO: This needs to take localPosition into account, but it works for now */
+bool CircleCollider_IsColliding(CircleCollider *first, CircleCollider *second)
+{
+    if (Distance(first->transform->position, second->transform->position) < first->radius + second->radius)
+    {
+        return true;
+    }
+    return false;
+}
+
+/* TODO: Implement this correctly */
+void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse)
+{
+    self->acceleration.x += force.x / self->mass;
+    self->acceleration.y += force.y / self->mass;
+}
+
+void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime)
+{
+    self->velocity.x += self->acceleration.x * deltaTime;
+    self->velocity.y += self->acceleration.y * deltaTime;
+
+    self->transform->position.x += self->velocity.x * deltaTime;
+    self->transform->position.y += self->velocity.y * deltaTime;
+
+    /* Reset acceleration so it does not carry over */
+    self->acceleration.x = 0;
+    self->acceleration.y = 0;
+}
+
+void RigidBody_UpdateAll(LinkedList *list, float deltaTime) {
+    Node *temp = list->head;
+    while (temp->next != NULL)
+    {
+        RigidBody_UpdateRigidBody(temp->value, deltaTime);
+        temp = temp->next;
+    }
 }

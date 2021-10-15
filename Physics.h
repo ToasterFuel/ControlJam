@@ -2,34 +2,39 @@
 #define __PHYSICS_H__
 
 #include <stdbool.h>
+#include "Vector2.h"
 
-typedef struct
+typedef struct BoxCollider
 {
-    float x;
-    float y;
-}Vector2;
-
-typedef struct
-{
-    Vector2 position;
+    Transform *transform;
+    Vector2 localPosition;
     float width;
     float height;
-}BoxCollider;
+} BoxCollider;
 
-typedef struct
+typedef struct CircleCollider
 {
-    Vector2 position;
+    Transform *transform;
+    Vector2 localPosition;
     float radius;
-}CircleCollider;
+} CircleCollider;
 
-Vector2 Difference(Vector2 position1, Vector2 position2);
+typedef struct RigidBody
+{
+    Transform *transform;
+    float mass;
+    Vector2 velocity;
+    Vector2 acceleration;
+} RigidBody;
 
-float Length(Vector2 vector);
+bool BoxCollider_IsColliding(BoxCollider *first, BoxCollider *second);
 
-float Distance(Vector2 position1, Vector2 position2);
+bool CircleCollider_IsColliding(CircleCollider *first, CircleCollider *second);
 
-bool IsBoxColliding(BoxCollider first, BoxCollider second);
+void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse);
 
-bool IsCircleColliding(CircleCollider first, CircleCollider second);
+void RigidBody_UpdateRigidBody(RigidBody *self, float deltaTime);
+
+void RigidBody_UpdateAll(LinkedList *list, float deltaTime);
 
 #endif
