@@ -5,8 +5,8 @@ FS_DIR = $(CURDIR)/Filesystem
 RESOURCES_DIR = $(CURDIR)/Resources
 
 IMGS = TestSprite.png TestSprite2.png
-DEPS = ControllerTesting.h Physics.h Vector2.h ECS.h Graphics.h LinkedList.h
-_OBJ = Program.o ControllerTesting.o Physics.o Vector2.o ECS.o Graphics.o LinkedList.o
+DEPS = ControllerTesting.h Physics.h Vector2.h ECS.h Graphics.h
+_OBJ = Program.o ControllerTesting.o Physics.o Vector2.o ECS.o Graphics.o
 
 OBJ = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
 SPRITES = $(patsubst %.png,%.sprite,$(IMGS))
@@ -17,6 +17,7 @@ MKDFS = $(ROOTDIR)/bin/mkdfs
 MKSPRITE = $(ROOTDIR)/bin/mksprite
 
 CC = $(GCCN64PREFIX)gcc
+CXX = $(GCCN64PREFIX)g++
 AS = $(GCCN64PREFIX)as
 LD = $(GCCN64PREFIX)ld
 OBJCOPY = $(GCCN64PREFIX)objcopy
@@ -25,7 +26,8 @@ CHKSUM64 = $(ROOTDIR)/bin/chksum64
 
 ASFLAGS = -mtune=vr4300 -march=vr4300
 CFLAGS = -std=gnu99 -march=vr4300 -mtune=vr4300 -O2 -Wall -Werror -I$(ROOTDIR)/mips64-elf/include
-LDFLAGS = -L$(ROOTDIR)/mips64-elf/lib -ldragon -lc -lm -ldragonsys -Tn64.ld --gc-sections
+CXXFLAGS = -std=c++11 -march=vr4300 -mtune=vr4300 -O2 -Wall -Werror -I$(ROOTDIR)/mips64-elf/include
+LDFLAGS = -L$(ROOTDIR)/mips64-elf/lib -ldragon -lc -lm -lstdc++ -ldragonsys -Tn64.ld -Wl,--gc-sections
 N64TOOLFLAGS = -l 8M -h $(ROOTDIR)/mips64-elf/lib/header -t "Control"
 
 ifeq ($(N64_BYTE_SWAP),true)
@@ -41,10 +43,10 @@ $(PROG_NAME).bin: $(PROG_NAME).elf
 	$(OBJCOPY) $(BUILD_DIR)/$< $(BUILD_DIR)/$@ -O binary
 
 $(PROG_NAME).elf: $(OBJ)
-	$(LD) -o $(BUILD_DIR)/$@ $^ $(LDFLAGS)
+	$(CXX) -o $(BUILD_DIR)/$@ $^ $(LDFLAGS)
 
-$(OBJ_DIR)/%.o: %.c $(DEPS) MakeDirs
-	$(CC) -c -o $@ $< $(CFLAGS)
+$(OBJ_DIR)/%.o: %.cpp $(DEPS) MakeDirs
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 MakeDirs:
 	mkdir -p $(BUILD_DIR) $(OBJ_DIR) $(FS_DIR)

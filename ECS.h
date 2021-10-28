@@ -1,49 +1,40 @@
 #ifndef __ECS_H__
 #define __ECS_H__
 
+#include <iterator>
+#include <iostream>
+#include <unordered_map>
+
 #include "Graphics.h"
-#include "LinkedList.h"
 #include "Physics.h"
 #include "Vector2.h"
 
 typedef struct ComponentsList
 {
-    LinkedList *transformComponents;
-    LinkedList *rectangleGraphicComponents;
-    LinkedList *rigidBodyComponents;
-    LinkedList *boxColliderComponents;
-    LinkedList *circleColliderComponents;
-
+    std::unordered_map<size_t, Transform *> transformComponents;
+    std::unordered_map<size_t, RectangleGraphic *> rectangleGraphicComponents;
+    std::unordered_map<size_t, RigidBody *> rigidBodyComponents;
+    std::unordered_map<size_t, BoxCollider *> boxColliderComponents;
+    std::unordered_map<size_t, CircleCollider *> circleColliderComponents;
 } ComponentsList;
-
-typedef struct Components
-{
-    Transform *transform;
-    RectangleGraphic *rectangleGraphic;
-    RigidBody *rigidBody;
-    BoxCollider *boxCollider;
-    CircleCollider *circleCollider;
-} Components;
 
 typedef struct Entity
 {
-    unsigned int uuid;
-    Components components;
+    size_t uuid;
+    /* ComponentMask mask; */
 } Entity;
 
 void ECS_FreeEntity(Entity *entity, ComponentsList *componentsList);
 
-void ECS_AddComponentTransform(Entity *entity, ComponentsList *componentsList, Vector2 position, Vector2 rotation);
+void ECS_AddComponentTransform(size_t uuid, ComponentsList *componentsList, Vector2 position, Vector2 rotation);
 
-void ECS_AddComponentRectangleGraphic(Entity *entity, ComponentsList *componentsList, float width, float height, uint32_t colour);
+void ECS_AddComponentRectangleGraphic(size_t uuid, ComponentsList *componentsList, float width, float height, uint32_t colour);
 
-void ECS_AddComponentRigidBody(Entity *entity, ComponentsList *componentsList, float mass);
+void ECS_AddComponentRigidBody(size_t uuid, ComponentsList *componentsList, float mass);
 
-void ECS_AddComponentBoxCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float width, float height);
+void ECS_AddComponentBoxCollider(size_t uuid, ComponentsList *componentsList, Vector2 localPosition, float width, float height);
 
-void ECS_AddComponentCircleCollider(Entity *entity, ComponentsList *componentsList, Vector2 localPosition, float radius);
-
-void ECS_CreateComponentsList(ComponentsList *componentsList);
+void ECS_AddComponentCircleCollider(size_t uuid, ComponentsList *componentsList, Vector2 localPosition, float radius);
 
 void ECS_UpdateComponents(ComponentsList *componentsList, float deltaTime);
 
