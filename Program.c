@@ -24,14 +24,14 @@ int main(void)
     int fp = dfs_open("/plane.sprite");
     if(fp > 0)
     {
-        planeSprite = malloc( dfs_size( fp ) );
+        planeSprite = (sprite_t*) malloc( dfs_size( fp ) );
         dfs_read( planeSprite, 1, dfs_size( fp ), fp );
         dfs_close( fp );
     }
     fp = dfs_open("/TestSprite.sprite");
     if(fp > 0)
     {
-        testSprite = malloc( dfs_size( fp ) );
+        testSprite = (sprite_t*) malloc( dfs_size( fp ) );
         dfs_read( testSprite, 1, dfs_size( fp ), fp );
         dfs_close( fp );
     }
