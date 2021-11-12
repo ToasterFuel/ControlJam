@@ -20,6 +20,15 @@ void ECS_FreeEntity(Entity *entity, ComponentsList *componentsList)
     entity = NULL;
 }
 
+void ECS_FreeByUUID(size_t uuid, ComponentsList *componentsList)
+{
+    componentsList->transformComponents.erase(uuid);
+    componentsList->rectangleGraphicComponents.erase(uuid);
+    componentsList->rigidBodyComponents.erase(uuid);
+    componentsList->boxColliderComponents.erase(uuid);
+    componentsList->circleColliderComponents.erase(uuid);
+}
+
 void ECS_AddComponentTransform(size_t uuid, ComponentsList *componentsList, Vector2 position, Vector2 rotation)
 {
     componentsList->transformComponents.insert(std::pair<size_t, Transform *>(uuid, (Transform *) malloc(sizeof(Transform))));

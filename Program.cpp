@@ -51,27 +51,24 @@ int main(void)
     ECS_AddComponentBoxCollider(player->uuid, &componentsList, ZeroVector(), 50, 50);
     ECS_AddComponentRigidBody(player->uuid, &componentsList, 1);
 
-    Entity *obstacle = (Entity *)malloc(sizeof(Entity));
-    obstacle->uuid = 1;
-    ECS_AddComponentTransform(obstacle->uuid, &componentsList, (Vector2){200, 150}, ZeroVector());
-    ECS_AddComponentRectangleGraphic(obstacle->uuid, &componentsList, 50, 50, 0x0000FFFF);
-    ECS_AddComponentBoxCollider(obstacle->uuid, &componentsList, ZeroVector(), 50, 50);
-
     /* Use this shizz if you wanna see a bunch of blocks */
 
-    //time_t t;
-    //srand((unsigned) time(&t));
-    for (int i = 0; i < 100; i++) {
-        Entity x;
-        x.uuid = 2 + i;
-        ECS_AddComponentTransform(x.uuid, &componentsList, (Vector2){(float)(rand() % 400), (float)(rand() % 400)}, ZeroVector());
+    time_t t;
+    srand((unsigned) time(&t));
+    int lastUUID = 1;
+    for (int i = 0; i < 10; i++) {
+        ++lastUUID;
+        int uuid = lastUUID + i;
         int size = rand() % 50;
-        ECS_AddComponentRectangleGraphic(x.uuid, &componentsList, size, size, 0x00FF00FF);
+        ECS_AddComponentTransform(uuid, &componentsList, (Vector2){(float)(rand() % 400), (float)(rand() % 400)}, ZeroVector());
+        ECS_AddComponentRectangleGraphic(uuid, &componentsList, size, size, (uint32_t)(rand() % 0xFFFFFFFF)/*0xFFFFFFFF*/);
+        ECS_AddComponentBoxCollider(uuid, &componentsList, ZeroVector(), size, size);
     }
     
     /**/
 
     int frame = 0;
+    size_t idErased = 99999;
 
     /* Main loop test */
     while (1)
@@ -89,14 +86,41 @@ int main(void)
         graphics_set_color(0xFFFFFFFF, 0x0);
 
         /* Stupid stuff for testing */
-        /*if (obstacle != NULL && BoxCollider_IsColliding(componentsList.transformComponents,
-                                                        componentsList.boxColliderComponents.find(player->uuid)->second,
-                                                        player->uuid,
-                                                        componentsList.boxColliderComponents.find(obstacle->uuid)->second,
-                                                        obstacle->uuid))
+        std::unordered_map<size_t, BoxCollider *>::iterator it = componentsList.boxColliderComponents.begin();
+        while (it != componentsList.boxColliderComponents.end())
         {
-            ECS_FreeEntity(obstacle, &componentsList);
-        }*/
+            if (it->first != player->uuid &&
+                BoxCollider_IsColliding(componentsList.transformComponents,
+                                        componentsList.boxColliderComponents.at(player->uuid),
+                                        player->uuid,
+                                        it->second,
+                                        it->first))
+            {
+                idErased = it->first;
+                size_t uuid = it->first;
+
+                ++it;
+                //it = componentsList.boxColliderComponents.erase(it);
+
+                //componentsList.rectangleGraphicComponents.erase(it->first);
+                ECS_FreeByUUID(uuid, &componentsList);
+            }
+            else {
+                ++it;
+            }
+        }
+        for (std::unordered_map<size_t, BoxCollider *>::iterator it = componentsList.boxColliderComponents.begin(); it != componentsList.boxColliderComponents.end(); it++)
+        {
+            if (it->first != player->uuid &&
+                BoxCollider_IsColliding(componentsList.transformComponents,
+                                        componentsList.boxColliderComponents.find(player->uuid)->second,
+                                        player->uuid,
+                                        it->second,
+                                        it->first))
+            {
+                ECS_FreeByUUID(it->first, &componentsList);
+            }
+        }
 
         /* To do initialize routines */
         controller_scan();
@@ -111,6 +135,8 @@ int main(void)
 
         std::string frameCount = "Frames: " + std::to_string(frame);
         graphics_draw_text(disp, 20, 20, frameCount.c_str());
+        std::string erasedID = "ID ERASED: " + std::to_string(idErased);
+        graphics_draw_text(disp, 20, 40, erasedID.c_str());
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */

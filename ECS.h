@@ -26,6 +26,8 @@ typedef struct Entity
 
 void ECS_FreeEntity(Entity *entity, ComponentsList *componentsList);
 
+void ECS_FreeByUUID(size_t uuid, ComponentsList *componentsList);
+
 void ECS_AddComponentTransform(size_t uuid, ComponentsList *componentsList, Vector2 position, Vector2 rotation);
 
 void ECS_AddComponentRectangleGraphic(size_t uuid, ComponentsList *componentsList, float width, float height, uint32_t colour);
