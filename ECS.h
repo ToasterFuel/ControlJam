@@ -1,13 +1,24 @@
 #ifndef __ECS_H__
 #define __ECS_H__
 
+#include <bitset>
 #include <iterator>
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 
 #include "Graphics.h"
 #include "Physics.h"
 #include "Vector2.h"
+
+const int MAX_COMPONENTS = 10;
+typedef std::bitset<MAX_COMPONENTS> ComponentMask;
+
+typedef struct Entity
+{
+    size_t uuid;
+    ComponentMask mask;
+} Entity;
 
 typedef struct ComponentsList
 {
@@ -16,17 +27,14 @@ typedef struct ComponentsList
     std::unordered_map<size_t, RigidBody *> rigidBodyComponents;
     std::unordered_map<size_t, BoxCollider *> boxColliderComponents;
     std::unordered_map<size_t, CircleCollider *> circleColliderComponents;
+    std::vector<Entity> entities;
 } ComponentsList;
 
-typedef struct Entity
-{
-    size_t uuid;
-    /* ComponentMask mask; */
-} Entity;
-
-void ECS_FreeEntity(Entity *entity);
+void ECS_FreeEntity(Entity entity);
 
 void ECS_FreeByUUID(size_t uuid);
+
+void ECS_AddEntity(Entity entity);
 
 void ECS_AddComponentTransform(size_t uuid, Vector2 position, Vector2 rotation);
 

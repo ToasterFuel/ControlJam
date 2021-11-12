@@ -75,6 +75,7 @@
         "vector2.h": "c",
         "__hash_table": "cpp",
         "__string": "cpp",
-        "__split_buffer": "cpp"
+        "__split_buffer": "cpp",
+        "__config": "cpp"
     }
 }

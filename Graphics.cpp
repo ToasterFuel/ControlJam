@@ -18,10 +18,11 @@ void RectangleGraphic_Draw(size_t uuid, RectangleGraphic *rectangle, display_con
 
 void RectangleGraphic_DrawAll(display_context_t disp)
 {
-    for (std::unordered_map<size_t, RectangleGraphic *>::iterator it = componentsList.rectangleGraphicComponents.begin();
-        it != componentsList.rectangleGraphicComponents.end();
+    for (std::vector<Entity>::iterator it = componentsList.entities.begin();
+        it != componentsList.entities.end();
         it++)
     {
-        RectangleGraphic_Draw(it->first, it->second, disp);
+        if ((*it).mask.test(2) /*componentsList.rectangleGraphicComponents.count((*it).uuid)*/)
+            RectangleGraphic_Draw((*it).uuid, componentsList.rectangleGraphicComponents.at((*it).uuid), disp);
     }
 }

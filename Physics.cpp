@@ -74,10 +74,11 @@ void RigidBody_Update(size_t uuid, RigidBody *self, float deltaTime)
 
 void RigidBody_UpdateAll(float deltaTime)
 {
-    for (std::unordered_map<size_t, RigidBody *>::iterator it = componentsList.rigidBodyComponents.begin();
-    it != componentsList.rigidBodyComponents.end();
-    it++)
+    for (std::vector<Entity>::iterator it = componentsList.entities.begin();
+        it != componentsList.entities.end();
+        it++)
     {
-        RigidBody_Update(it->first, it->second, deltaTime);
+        if ((*it).mask.test(3) /*componentsList.rigidBodyComponents.count((*it).uuid)*/)
+            RigidBody_Update((*it).uuid, componentsList.rigidBodyComponents.at((*it).uuid), deltaTime);
     }
 }
