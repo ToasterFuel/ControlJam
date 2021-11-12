@@ -54,21 +54,23 @@ int main(void)
     /* Use this shizz if you wanna see a bunch of blocks */
 
     time_t t;
-    srand((unsigned) time(&t));
-    int lastUUID = 1;
-    for (int i = 0; i < 10; i++) {
+    srand((unsigned)time(&t));
+    int lastUUID = 0;
+
+
+    for (int i = 0; i < 10; i++)
+    {
         ++lastUUID;
         int uuid = lastUUID + i;
         int size = rand() % 50;
         ECS_AddComponentTransform(uuid, &componentsList, (Vector2){(float)(rand() % 400), (float)(rand() % 400)}, ZeroVector());
-        ECS_AddComponentRectangleGraphic(uuid, &componentsList, size, size, (uint32_t)(rand() % 0xFFFFFFFF)/*0xFFFFFFFF*/);
+        ECS_AddComponentRectangleGraphic(uuid, &componentsList, size, size, (uint32_t)(rand() % 0xFFFFFFFF));
         ECS_AddComponentBoxCollider(uuid, &componentsList, ZeroVector(), size, size);
     }
-    
+
     /**/
 
     int frame = 0;
-    size_t idErased = 99999;
 
     /* Main loop test */
     while (1)
@@ -77,7 +79,8 @@ int main(void)
         static display_context_t disp = 0;
 
         /* Grab a render buffer */
-        while (!(disp = display_lock()));
+        while (!(disp = display_lock()))
+            ;
 
         /* Fill the screen */
         graphics_fill_screen(disp, 0x0);
@@ -96,16 +99,12 @@ int main(void)
                                         it->second,
                                         it->first))
             {
-                idErased = it->first;
                 size_t uuid = it->first;
-
                 ++it;
-                //it = componentsList.boxColliderComponents.erase(it);
-
-                //componentsList.rectangleGraphicComponents.erase(it->first);
                 ECS_FreeByUUID(uuid, &componentsList);
             }
-            else {
+            else
+            {
                 ++it;
             }
         }
@@ -135,8 +134,6 @@ int main(void)
 
         std::string frameCount = "Frames: " + std::to_string(frame);
         graphics_draw_text(disp, 20, 20, frameCount.c_str());
-        std::string erasedID = "ID ERASED: " + std::to_string(idErased);
-        graphics_draw_text(disp, 20, 40, erasedID.c_str());
 
         /* PrintControllerStats(); */
         /* printf("Is it null? %s\n", (testSprite == NULL) ? "YES": "NO"); */

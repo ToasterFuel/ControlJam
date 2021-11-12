@@ -9,10 +9,10 @@
 /* TODO: This needs to take localPosition into account, but it works for now */
 bool BoxCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMap, BoxCollider *first, size_t firstUUID, BoxCollider *second, size_t secondUUID)
 {
-    if (transformMap.at(firstUUID)->position.x - first->width / 2 < transformMap.at(secondUUID)->position.x + second->width / 2 &&
-        transformMap.at(firstUUID)->position.x + first->width / 2 > transformMap.at(secondUUID)->position.x - second->width / 2 &&
-        transformMap.at(firstUUID)->position.y - first->height / 2 < transformMap.at(secondUUID)->position.y + second->height / 2 &&
-        transformMap.at(firstUUID)->position.y + first->height / 2 > transformMap.at(secondUUID)->position.y - second->height / 2)
+    if (transformMap.at(firstUUID)->position.x < transformMap.at(secondUUID)->position.x + second->width  &&
+        transformMap.at(firstUUID)->position.x + first->width > transformMap.at(secondUUID)->position.x &&
+        transformMap.at(firstUUID)->position.y < transformMap.at(secondUUID)->position.y + second->height &&
+        transformMap.at(firstUUID)->position.y + first->height > transformMap.at(secondUUID)->position.y)
     {
         return true;
     }
