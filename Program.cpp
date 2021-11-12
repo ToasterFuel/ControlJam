@@ -10,6 +10,7 @@
 
 #include "ControllerTesting.h"
 #include "ECS.h"
+#include "Globals.h"
 #include "Graphics.h"
 #include "Physics.h"
 #include "Vector2.h"
@@ -18,6 +19,8 @@ static resolution_t res = RESOLUTION_640x480;
 static bitdepth_t bit = DEPTH_32_BPP;
 
 static float moveSpeed = 1;
+
+ComponentsList componentsList;
 
 int main(void)
 {
@@ -41,15 +44,13 @@ int main(void)
         dfs_close(fp);
     }
 
-    ComponentsList componentsList;
-
     /* These are pointers cause I'm doing a test. They don't need to be */
     Entity *player = (Entity *)malloc(sizeof(Entity));
     player->uuid = 0;
-    ECS_AddComponentTransform(player->uuid, &componentsList, (Vector2){100, 100}, ZeroVector());
-    ECS_AddComponentRectangleGraphic(player->uuid, &componentsList, 50, 50, 0xFF0000FF);
-    ECS_AddComponentBoxCollider(player->uuid, &componentsList, ZeroVector(), 50, 50);
-    ECS_AddComponentRigidBody(player->uuid, &componentsList, 1);
+    ECS_AddComponentTransform(player->uuid, (Vector2){100, 100}, ZeroVector());
+    ECS_AddComponentRectangleGraphic(player->uuid, 50, 50, 0xFF0000FF);
+    ECS_AddComponentBoxCollider(player->uuid, ZeroVector(), 50, 50);
+    ECS_AddComponentRigidBody(player->uuid, 1);
 
     /* Use this shizz if you wanna see a bunch of blocks */
 
@@ -63,9 +64,9 @@ int main(void)
         ++lastUUID;
         int uuid = lastUUID + i;
         int size = rand() % 50;
-        ECS_AddComponentTransform(uuid, &componentsList, (Vector2){(float)(rand() % 400), (float)(rand() % 400)}, ZeroVector());
-        ECS_AddComponentRectangleGraphic(uuid, &componentsList, size, size, (uint32_t)(rand() % 0xFFFFFFFF));
-        ECS_AddComponentBoxCollider(uuid, &componentsList, ZeroVector(), size, size);
+        ECS_AddComponentTransform(uuid, (Vector2){(float)(rand() % 400), (float)(rand() % 400)}, ZeroVector());
+        ECS_AddComponentRectangleGraphic(uuid, size, size, (uint32_t)(rand() % 0xFFFFFFFF));
+        ECS_AddComponentBoxCollider(uuid, ZeroVector(), size, size);
     }
 
     /**/
@@ -93,31 +94,31 @@ int main(void)
         while (it != componentsList.boxColliderComponents.end())
         {
             if (it->first != player->uuid &&
-                BoxCollider_IsColliding(componentsList.transformComponents,
-                                        componentsList.boxColliderComponents.at(player->uuid),
+                BoxCollider_IsColliding(componentsList.boxColliderComponents.at(player->uuid),
                                         player->uuid,
                                         it->second,
                                         it->first))
             {
                 size_t uuid = it->first;
                 ++it;
-                ECS_FreeByUUID(uuid, &componentsList);
+                ECS_FreeByUUID(uuid);
             }
             else
             {
                 ++it;
             }
         }
-        for (std::unordered_map<size_t, BoxCollider *>::iterator it = componentsList.boxColliderComponents.begin(); it != componentsList.boxColliderComponents.end(); it++)
+        for (std::unordered_map<size_t, BoxCollider *>::iterator it = componentsList.boxColliderComponents.begin();
+            it != componentsList.boxColliderComponents.end();
+            it++)
         {
             if (it->first != player->uuid &&
-                BoxCollider_IsColliding(componentsList.transformComponents,
-                                        componentsList.boxColliderComponents.find(player->uuid)->second,
+                BoxCollider_IsColliding(componentsList.boxColliderComponents.find(player->uuid)->second,
                                         player->uuid,
                                         it->second,
                                         it->first))
             {
-                ECS_FreeByUUID(it->first, &componentsList);
+                ECS_FreeByUUID(it->first);
             }
         }
 
@@ -126,11 +127,11 @@ int main(void)
 
         /* Move the player */
         struct controller_data keys = get_keys_pressed();
-        RigidBody_AddForce(componentsList.rigidBodyComponents[player->uuid], (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
+        RigidBody_AddForce(componentsList.rigidBodyComponents.at(player->uuid), (Vector2){keys.c[0].x * moveSpeed, -keys.c[0].y * moveSpeed}, false);
 
-        float time = 1.0 / 30.0;
-        ECS_UpdateComponents(&componentsList, time);
-        ECS_DrawComponents(&componentsList, disp);
+        float time = 1.0 / 10.0;
+        ECS_UpdateComponents(time);
+        ECS_DrawComponents(disp);
 
         std::string frameCount = "Frames: " + std::to_string(frame);
         graphics_draw_text(disp, 20, 20, frameCount.c_str());

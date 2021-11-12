@@ -15,8 +15,8 @@ typedef struct RectangleGraphic
     uint32_t colour;
 } RectangleGraphic;
 
-void RectangleGraphic_Draw(std::unordered_map<size_t, Transform *> transformMap, size_t uuid, RectangleGraphic *rectangle, display_context_t disp);
+void RectangleGraphic_Draw(size_t uuid, RectangleGraphic *rectangle, display_context_t disp);
 
-void RectangleGraphic_DrawAll(std::unordered_map<size_t, RectangleGraphic *> map, std::unordered_map<size_t, Transform *> transformMap, display_context_t disp);
+void RectangleGraphic_DrawAll(display_context_t disp);
 
 #endif

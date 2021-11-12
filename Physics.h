@@ -31,14 +31,14 @@ typedef struct RigidBody
     Vector2 acceleration;
 } RigidBody;
 
-bool BoxCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMap, BoxCollider *first, size_t firstUUID, BoxCollider *second, size_t secondUUID);
+bool BoxCollider_IsColliding(BoxCollider *first, size_t firstUUID, BoxCollider *second, size_t secondUUID);
 
-bool CircleCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMap, CircleCollider *first, size_t firstUUID, CircleCollider *second, size_t secondUUID);
+bool CircleCollider_IsColliding(CircleCollider *first, size_t firstUUID, CircleCollider *second, size_t secondUUID);
 
 void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse);
 
-void RigidBody_Update(std::unordered_map<size_t, Transform *> transformMap, size_t uuid, RigidBody *self, float deltaTime);
+void RigidBody_Update(size_t uuid, RigidBody *self, float deltaTime);
 
-void RigidBody_UpdateAll(std::unordered_map<size_t, RigidBody *> map, std::unordered_map<size_t, Transform *> transformMap, float deltaTime);
+void RigidBody_UpdateAll(float deltaTime);
 
 #endif

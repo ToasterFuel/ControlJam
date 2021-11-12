@@ -3,16 +3,17 @@
 #include <iterator>
 #include <unordered_map>
 
+#include "Globals.h"
 #include "Physics.h"
 #include "Vector2.h"
 
 /* TODO: This needs to take localPosition into account, but it works for now */
-bool BoxCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMap, BoxCollider *first, size_t firstUUID, BoxCollider *second, size_t secondUUID)
+bool BoxCollider_IsColliding(BoxCollider *first, size_t firstUUID, BoxCollider *second, size_t secondUUID)
 {
-    if (transformMap.at(firstUUID)->position.x < transformMap.at(secondUUID)->position.x + second->width  &&
-        transformMap.at(firstUUID)->position.x + first->width > transformMap.at(secondUUID)->position.x &&
-        transformMap.at(firstUUID)->position.y < transformMap.at(secondUUID)->position.y + second->height &&
-        transformMap.at(firstUUID)->position.y + first->height > transformMap.at(secondUUID)->position.y)
+    if (componentsList.transformComponents.at(firstUUID)->position.x < componentsList.transformComponents.at(secondUUID)->position.x + second->width  &&
+        componentsList.transformComponents.at(firstUUID)->position.x + first->width > componentsList.transformComponents.at(secondUUID)->position.x &&
+        componentsList.transformComponents.at(firstUUID)->position.y < componentsList.transformComponents.at(secondUUID)->position.y + second->height &&
+        componentsList.transformComponents.at(firstUUID)->position.y + first->height > componentsList.transformComponents.at(secondUUID)->position.y)
     {
         return true;
     }
@@ -20,9 +21,9 @@ bool BoxCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMa
 }
 
 /* TODO: This needs to take localPosition into account, but it works for now */
-bool CircleCollider_IsColliding(std::unordered_map<size_t, Transform *> transformMap, CircleCollider *first, size_t firstUUID, CircleCollider *second, size_t secondUUID)
+bool CircleCollider_IsColliding(CircleCollider *first, size_t firstUUID, CircleCollider *second, size_t secondUUID)
 {
-    if (Distance(transformMap.at(firstUUID)->position, transformMap.at(secondUUID)->position) < first->radius + second->radius)
+    if (Distance(componentsList.transformComponents.at(firstUUID)->position, componentsList.transformComponents.at(secondUUID)->position) < first->radius + second->radius)
     {
         return true;
     }
@@ -36,23 +37,47 @@ void RigidBody_AddForce(RigidBody *self, Vector2 force, bool isImpulse)
     self->acceleration.y += force.y / self->mass;
 }
 
-void RigidBody_Update(std::unordered_map<size_t, Transform *> transformMap, size_t uuid, RigidBody *self, float deltaTime)
+void RigidBody_Update(size_t uuid, RigidBody *self, float deltaTime)
 {
     self->velocity.x += self->acceleration.x * deltaTime;
     self->velocity.y += self->acceleration.y * deltaTime;
 
-    transformMap.at(uuid)->position.x += self->velocity.x * deltaTime;
-    transformMap.at(uuid)->position.y += self->velocity.y * deltaTime;
+    componentsList.transformComponents.at(uuid)->position.x += self->velocity.x * deltaTime;
+    componentsList.transformComponents.at(uuid)->position.y += self->velocity.y * deltaTime;
+
+    // Stop moving if moving out of bounds
+    if (componentsList.transformComponents.at(uuid)->position.x < 0)
+    {
+        componentsList.transformComponents.at(uuid)->position.x = 0;
+        self->velocity.x = 0;
+    }
+    else if (componentsList.transformComponents.at(uuid)->position.x + componentsList.boxColliderComponents.at(uuid)->width > SCREEN_X)
+    {
+        componentsList.transformComponents.at(uuid)->position.x = SCREEN_X - componentsList.boxColliderComponents.at(uuid)->width;
+        self->velocity.x = 0;
+    }
+    if (componentsList.transformComponents.at(uuid)->position.y < 0)
+    {
+        componentsList.transformComponents.at(uuid)->position.y = 0;
+        self->velocity.y = 0;
+    }
+    else if (componentsList.transformComponents.at(uuid)->position.y + componentsList.boxColliderComponents.at(uuid)->height > SCREEN_Y)
+    {
+        componentsList.transformComponents.at(uuid)->position.y = SCREEN_Y - componentsList.boxColliderComponents.at(uuid)->height;
+        self->velocity.y = 0;
+    }
 
     /* Reset acceleration so it does not carry over */
     self->acceleration.x = 0;
     self->acceleration.y = 0;
 }
 
-void RigidBody_UpdateAll(std::unordered_map<size_t, RigidBody *> map, std::unordered_map<size_t, Transform *> transformMap, float deltaTime)
+void RigidBody_UpdateAll(float deltaTime)
 {
-    for (std::unordered_map<size_t, RigidBody *>::iterator it = map.begin(); it != map.end(); it++)
+    for (std::unordered_map<size_t, RigidBody *>::iterator it = componentsList.rigidBodyComponents.begin();
+    it != componentsList.rigidBodyComponents.end();
+    it++)
     {
-        RigidBody_Update(transformMap, it->first, it->second, deltaTime);
+        RigidBody_Update(it->first, it->second, deltaTime);
     }
 }

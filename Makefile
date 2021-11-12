@@ -5,7 +5,7 @@ FS_DIR = $(CURDIR)/Filesystem
 RESOURCES_DIR = $(CURDIR)/Resources
 
 IMGS = TestSprite.png TestSprite2.png
-DEPS = ControllerTesting.h Physics.h Vector2.h ECS.h Graphics.h
+DEPS =  Globals.h ControllerTesting.h Physics.h Vector2.h ECS.h Graphics.h
 _OBJ = Program.o ControllerTesting.o Physics.o Vector2.o ECS.o Graphics.o
 
 OBJ = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
